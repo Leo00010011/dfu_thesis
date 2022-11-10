@@ -1,40 +1,12 @@
-# ----------------------------------------------------------------------------
-# -                        Open3D: www.open3d.org                            -
-# ----------------------------------------------------------------------------
-# The MIT License (MIT)
-#
-# Copyright (c) 2018-2021 www.open3d.org
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-# IN THE SOFTWARE.
-# ----------------------------------------------------------------------------
-
-# examples/python/reconstruction_system/register_fragments.py
-
+from refine_registration import multiscale_icp
+from optimize_posegraph import optimize_posegraph_for_scene
+from visualization import draw_registration_result
+from file import join, get_file_list, make_clean_folder
 import numpy as np
 import open3d as o3d
 import sys
 sys.path.append("../utility")
-from file import join, get_file_list, make_clean_folder
-from visualization import draw_registration_result
 sys.path.append(".")
-from optimize_posegraph import optimize_posegraph_for_scene
-from refine_registration import multiscale_icp
 
 
 def preprocess_point_cloud(pcd, config):
@@ -91,8 +63,8 @@ def compute_initial_registration(s, t, source_down, target_down, source_fpfh,
         transformation_init = np.linalg.inv(pose_graph_frag.nodes[n_nodes -
                                                                   1].pose)
         (transformation, information) = \
-                multiscale_icp(source_down, target_down,
-                [config["voxel_size"]], [50], config, transformation_init)
+            multiscale_icp(source_down, target_down,
+                           [config["voxel_size"]], [50], config, transformation_init)
     else:  # loop closure case
         (success, transformation,
          information) = register_point_cloud_fpfh(source_down, target_down,
@@ -139,9 +111,9 @@ def register_point_cloud_pair(ply_file_names, s, t, config):
     (source_down, source_fpfh) = preprocess_point_cloud(source, config)
     (target_down, target_fpfh) = preprocess_point_cloud(target, config)
     (success, transformation, information) = \
-            compute_initial_registration(
-            s, t, source_down, target_down,
-            source_fpfh, target_fpfh, config["path_dataset"], config)
+        compute_initial_registration(
+        s, t, source_down, target_down,
+        source_fpfh, target_fpfh, config["path_dataset"], config)
     if t != s + 1 and not success:
         return (False, np.identity(4), np.identity(6))
     if config["debug_mode"]:
@@ -181,7 +153,7 @@ def make_posegraph_for_scene(ply_file_names, config):
         results = Parallel(n_jobs=MAX_THREAD)(delayed(
             register_point_cloud_pair)(ply_file_names, matching_results[r].s,
                                        matching_results[r].t, config)
-                                              for r in matching_results)
+            for r in matching_results)
         for i, r in enumerate(matching_results):
             matching_results[r].success = results[i][0]
             matching_results[r].transformation = results[i][1]
@@ -189,9 +161,9 @@ def make_posegraph_for_scene(ply_file_names, config):
     else:
         for r in matching_results:
             (matching_results[r].success, matching_results[r].transformation,
-                    matching_results[r].information) = \
-                    register_point_cloud_pair(ply_file_names,
-                    matching_results[r].s, matching_results[r].t, config)
+             matching_results[r].information) = \
+                register_point_cloud_pair(ply_file_names,
+                                          matching_results[r].s, matching_results[r].t, config)
 
     for r in matching_results:
         if matching_results[r].success:

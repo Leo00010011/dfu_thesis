@@ -1,35 +1,7 @@
-# ----------------------------------------------------------------------------
-# -                        Open3D: www.open3d.org                            -
-# ----------------------------------------------------------------------------
-# The MIT License (MIT)
-#
-# Copyright (c) 2018-2021 www.open3d.org
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-# IN THE SOFTWARE.
-# ----------------------------------------------------------------------------
-
-# examples/python/reconstruction_system/optimize_posegraph.py
-
+from file import join
 import open3d as o3d
 import sys
 sys.path.append("../utility")
-from file import join
 
 
 def run_posegraph_optimization(pose_graph_name, pose_graph_optimized_name,
@@ -59,9 +31,8 @@ def optimize_posegraph_for_fragment(path_dataset, fragment_id, config):
         path_dataset,
         config["template_fragment_posegraph_optimized"] % fragment_id)
     run_posegraph_optimization(pose_graph_name, pose_graph_optimized_name,
-            max_correspondence_distance = config["max_depth_diff"],
-            preference_loop_closure = \
-            config["preference_loop_closure_odometry"])
+                               max_correspondence_distance=config["max_depth_diff"],
+                               preference_loop_closure=config["preference_loop_closure_odometry"])
 
 
 def optimize_posegraph_for_scene(path_dataset, config):
@@ -69,9 +40,8 @@ def optimize_posegraph_for_scene(path_dataset, config):
     pose_graph_optimized_name = join(
         path_dataset, config["template_global_posegraph_optimized"])
     run_posegraph_optimization(pose_graph_name, pose_graph_optimized_name,
-            max_correspondence_distance = config["voxel_size"] * 1.4,
-            preference_loop_closure = \
-            config["preference_loop_closure_registration"])
+                               max_correspondence_distance=config["voxel_size"] * 1.4,
+                               preference_loop_closure=config["preference_loop_closure_registration"])
 
 
 def optimize_posegraph_for_refined_scene(path_dataset, config):
@@ -79,6 +49,5 @@ def optimize_posegraph_for_refined_scene(path_dataset, config):
     pose_graph_optimized_name = join(
         path_dataset, config["template_refined_posegraph_optimized"])
     run_posegraph_optimization(pose_graph_name, pose_graph_optimized_name,
-            max_correspondence_distance = config["voxel_size"] * 1.4,
-            preference_loop_closure = \
-            config["preference_loop_closure_registration"])
+                               max_correspondence_distance=config["voxel_size"] * 1.4,
+                               preference_loop_closure=config["preference_loop_closure_registration"])

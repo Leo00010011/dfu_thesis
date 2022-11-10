@@ -1,38 +1,3 @@
-# ----------------------------------------------------------------------------
-# -                        Open3D: www.open3d.org                            -
-# ----------------------------------------------------------------------------
-# The MIT License (MIT)
-#
-# Copyright (c) 2018-2021 www.open3d.org
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-# IN THE SOFTWARE.
-# ----------------------------------------------------------------------------
-
-# examples/python/reconstruction_system/opencv_pose_estimation.py
-
-# following code is tested with OpenCV 3.2.0 and Python2.7
-# how to install opencv
-# conda create --prefix py27opencv python=2.7
-# source activate py27opencv
-# conda install -c conda-forge opencv
-# conda install -c conda-forge openblas (if openblas conflicts)
-
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt  # for visualizing feature matching
@@ -195,13 +160,13 @@ def estimate_3D_transform_RANSAC(pts_xyz_s, pts_xyz_t):
         # note: diag(R_approx) > 0 prevents ankward transformation between
         # RGBD pair of relatively small amount of baseline.
         if (n_inlier > max_inlier) and (np.linalg.det(R_approx) != 0.0) and \
-                (R_approx[0,0] > 0 and R_approx[1,1] > 0 and R_approx[2,2] > 0):
+                (R_approx[0, 0] > 0 and R_approx[1, 1] > 0 and R_approx[2, 2] > 0):
             Transform_good[:3, :3] = R_approx
             Transform_good[:3, 3] = [t_approx[0], t_approx[1], t_approx[2]]
             max_inlier = n_inlier
-            inlier_vec = [id_iter for diff_iter, id_iter \
-                    in zip(diff, range(n_points)) \
-                    if diff_iter < max_distance]
+            inlier_vec = [id_iter for diff_iter, id_iter
+                          in zip(diff, range(n_points))
+                          if diff_iter < max_distance]
             inlier_vec_good = inlier_vec
             success = True
 

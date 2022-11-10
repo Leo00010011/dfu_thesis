@@ -1,39 +1,11 @@
-# ----------------------------------------------------------------------------
-# -                        Open3D: www.open3d.org                            -
-# ----------------------------------------------------------------------------
-# The MIT License (MIT)
-#
-# Copyright (c) 2018-2021 www.open3d.org
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-# IN THE SOFTWARE.
-# ----------------------------------------------------------------------------
-
-# examples/python/reconstruction_system/refine_registration.py
-
+from optimize_posegraph import optimize_posegraph_for_refined_scene
+from visualization import draw_registration_result_original_color
+from file import join, get_file_list, write_poses_to_log
 import numpy as np
 import open3d as o3d
 import sys
 sys.path.append("../utility")
-from file import join, get_file_list, write_poses_to_log
-from visualization import draw_registration_result_original_color
 sys.path.append(".")
-from optimize_posegraph import optimize_posegraph_for_refined_scene
 
 
 def update_posegraph_for_scene(s, t, transformation, information, odometry,
@@ -129,10 +101,10 @@ def multiscale_icp(source,
 def local_refinement(source, target, transformation_init, config):
     voxel_size = config["voxel_size"]
     (transformation, information) = \
-            multiscale_icp(
-            source, target,
-            [voxel_size, voxel_size/2.0, voxel_size/4.0], [50, 30, 14],
-            config, transformation_init)
+        multiscale_icp(
+        source, target,
+        [voxel_size, voxel_size/2.0, voxel_size/4.0], [50, 30, 14],
+        config, transformation_init)
     return (transformation, information)
 
 
@@ -200,10 +172,10 @@ def make_posegraph_for_refined_scene(ply_file_names, config):
     else:
         for r in matching_results:
             (matching_results[r].transformation,
-                    matching_results[r].information) = \
-                    register_point_cloud_pair(ply_file_names,
-                    matching_results[r].s, matching_results[r].t,
-                    matching_results[r].transformation, config)
+             matching_results[r].information) = \
+                register_point_cloud_pair(ply_file_names,
+                                          matching_results[r].s, matching_results[r].t,
+                                          matching_results[r].transformation, config)
 
     pose_graph_new = o3d.pipelines.registration.PoseGraph()
     odometry = np.identity(4)
@@ -241,7 +213,7 @@ def run(config):
                  config["template_fragment_posegraph_optimized"] % fragment_id))
         for frame_id in range(len(pose_graph_rgbd.nodes)):
             frame_id_abs = fragment_id * \
-                    config['n_frames_per_fragment'] + frame_id
+                config['n_frames_per_fragment'] + frame_id
             pose = np.dot(pose_graph_fragment.nodes[fragment_id].pose,
                           pose_graph_rgbd.nodes[frame_id].pose)
             poses.append(pose)

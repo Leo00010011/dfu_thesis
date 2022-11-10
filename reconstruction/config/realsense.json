@@ -1,9 +1,0 @@
-{
-  "path_dataset": "../../../../dfu/5.bag",
-  "max_depth": 0.85,
-  "voxel_size": 0.01,
-  "max_depth_diff": 0.03,
-  "tsdf_cubic_size": 0.5,
-  "python_multi_threading": true,
-  "n_frames_per_fragment": 20
-}

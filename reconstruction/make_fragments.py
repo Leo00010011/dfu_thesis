@@ -1,40 +1,12 @@
-# ----------------------------------------------------------------------------
-# -                        Open3D: www.open3d.org                            -
-# ----------------------------------------------------------------------------
-# The MIT License (MIT)
-#
-# Copyright (c) 2018-2021 www.open3d.org
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-# IN THE SOFTWARE.
-# ----------------------------------------------------------------------------
-
-# examples/python/reconstruction_system/make_fragments.py
-
+from optimize_posegraph import optimize_posegraph_for_fragment
+from opencv import initialize_opencv
+from file import join, make_clean_folder, get_rgbd_file_lists
 import math
 import sys
 import numpy as np
 import open3d as o3d
 sys.path.append("../utility")
-from file import join, make_clean_folder, get_rgbd_file_lists
-from opencv import initialize_opencv
 sys.path.append(".")
-from optimize_posegraph import optimize_posegraph_for_fragment
 
 # check opencv python package
 with_opencv = initialize_opencv()
@@ -70,7 +42,7 @@ def register_one_rgbd_pair(s, t, color_files, depth_files, intrinsic,
                                                     intrinsic, False)
             if success_5pt:
                 [success, trans, info
-                ] = o3d.pipelines.odometry.compute_rgbd_odometry(
+                 ] = o3d.pipelines.odometry.compute_rgbd_odometry(
                     source_rgbd_image, target_rgbd_image, intrinsic, odo_init,
                     o3d.pipelines.odometry.RGBDOdometryJacobianFromHybridTerm(),
                     option)
@@ -128,7 +100,8 @@ def make_posegraph_for_fragment(path_dataset, sid, eid, color_files,
                         o3d.pipelines.registration.PoseGraphEdge(
                             s - sid, t - sid, trans, info, uncertain=True))
     o3d.io.write_pose_graph(
-        join(path_dataset, config["template_fragment_posegraph"] % fragment_id),
+        join(path_dataset,
+             config["template_fragment_posegraph"] % fragment_id),
         pose_graph)
 
 
@@ -183,7 +156,8 @@ def process_single_fragment(fragment_id, color_files, depth_files, n_files,
     make_posegraph_for_fragment(config["path_dataset"], sid, eid, color_files,
                                 depth_files, fragment_id, n_fragments,
                                 intrinsic, with_opencv, config)
-    optimize_posegraph_for_fragment(config["path_dataset"], fragment_id, config)
+    optimize_posegraph_for_fragment(
+        config["path_dataset"], fragment_id, config)
     make_pointcloud_for_fragment(config["path_dataset"], color_files,
                                  depth_files, fragment_id, n_fragments,
                                  intrinsic, config)
@@ -206,7 +180,7 @@ def run(config):
         MAX_THREAD = min(multiprocessing.cpu_count(), n_fragments)
         Parallel(n_jobs=MAX_THREAD)(delayed(process_single_fragment)(
             fragment_id, color_files, depth_files, n_files, n_fragments, config)
-                                    for fragment_id in range(n_fragments))
+            for fragment_id in range(n_fragments))
     else:
         for fragment_id in range(n_fragments):
             process_single_fragment(fragment_id, color_files, depth_files,
