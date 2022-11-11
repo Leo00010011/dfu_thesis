@@ -1,10 +1,6 @@
-from file import join, get_file_list, write_poses_to_log
+from .utility.file import join, get_file_list, write_poses_to_log
 import numpy as np
 import open3d as o3d
-import sys
-sys.path.append("../utility")
-
-sys.path.append(".")
 
 
 def run(config):

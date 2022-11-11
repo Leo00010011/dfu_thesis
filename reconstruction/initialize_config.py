@@ -1,7 +1,5 @@
-from file import check_folder_structure, extract_rgbd_frames
+from .utility.file import check_folder_structure, extract_rgbd_frames
 import os
-import sys
-sys.path.append("../utility")
 
 
 def set_default_value(config, key, value):

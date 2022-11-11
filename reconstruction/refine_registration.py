@@ -1,11 +1,8 @@
-from optimize_posegraph import optimize_posegraph_for_refined_scene
-from visualization import draw_registration_result_original_color
-from file import join, get_file_list, write_poses_to_log
+from .optimize_posegraph import optimize_posegraph_for_refined_scene
+from .utility.visualization import draw_registration_result_original_color
+from .utility.file import join, get_file_list, write_poses_to_log
 import numpy as np
 import open3d as o3d
-import sys
-sys.path.append("../utility")
-sys.path.append(".")
 
 
 def update_posegraph_for_scene(s, t, transformation, information, odometry,

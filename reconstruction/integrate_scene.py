@@ -1,11 +1,8 @@
-from make_fragments import read_rgbd_image
-from file import *
+from .make_fragments import read_rgbd_image
+from .utility.file import *
 import numpy as np
 import math
-import sys
 import open3d as o3d
-sys.path.append("../utility")
-sys.path.append(".")
 
 
 def scalable_integrate_rgb_frames(path_dataset, intrinsic, config):

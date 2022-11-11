@@ -1,17 +1,14 @@
-from optimize_posegraph import optimize_posegraph_for_fragment
-from opencv import initialize_opencv
-from file import join, make_clean_folder, get_rgbd_file_lists
+from .optimize_posegraph import optimize_posegraph_for_fragment
+from .utility.opencv import initialize_opencv
+from .utility.file import join, make_clean_folder, get_rgbd_file_lists
 import math
-import sys
 import numpy as np
 import open3d as o3d
-sys.path.append("../utility")
-sys.path.append(".")
 
 # check opencv python package
 with_opencv = initialize_opencv()
 if with_opencv:
-    from opencv_pose_estimation import pose_estimation
+    from .opencv_pose_estimation import pose_estimation
 
 
 def read_rgbd_image(color_file, depth_file, convert_rgb_to_intensity, config):

@@ -1,12 +1,9 @@
-from refine_registration import multiscale_icp
-from optimize_posegraph import optimize_posegraph_for_scene
-from visualization import draw_registration_result
-from file import join, get_file_list, make_clean_folder
+from .refine_registration import multiscale_icp
+from .optimize_posegraph import optimize_posegraph_for_scene
+from .utility.visualization import draw_registration_result
+from .utility.file import join, get_file_list, make_clean_folder
 import numpy as np
 import open3d as o3d
-import sys
-sys.path.append("../utility")
-sys.path.append(".")
 
 
 def preprocess_point_cloud(pcd, config):
