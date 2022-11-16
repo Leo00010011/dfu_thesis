@@ -1,12 +1,13 @@
 # import pyrealsense2 as rs
 from pyrealsense2 import pyrealsense2 as rs
-from .decimation import decimation_filter
-from .spatial import spatial_filter
-from .temporal import temporal_filter
-from .hole_filling import hole_filling_filter
+from processing.depth.decimation import decimation_filter
+from processing.depth.spatial import spatial_filter
+from processing.depth.temporal import temporal_filter
+from processing.depth.hole_filling import hole_filling_filter
 
 
 def pipeline(depth_frame):
+    return depth_frame
     """
     These filters work best when applied sequentially one after another. At longer range, it also helps using `disparity_transform` to switch from depth representation to disparity form:
     """

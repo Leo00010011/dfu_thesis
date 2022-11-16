@@ -1,6 +1,5 @@
 import numpy as np
-# import cv2
-from cv2 import cv2
+import cv2
 
 KERNEL = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
 

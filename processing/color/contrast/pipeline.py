@@ -1,8 +1,7 @@
-from .clahe import CLAHE
-# import cv2
-from cv2 import cv2
+from processing.color.contrast.clahe import CLAHE
+import cv2
 import numpy as np
-from .agcwd import image_agcwd
+from processing.color.contrast.agcwd import image_agcwd
 
 
 def process_bright(rgb_img):

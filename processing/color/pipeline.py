@@ -1,6 +1,6 @@
-from .focus import focus
-from .remove_tissue import remove_tissue
-from .contrast.pipeline import pipeline as contrast_pipeline
+from processing.color.focus import focus
+from processing.color.remove_tissue import remove_tissue
+from processing.color.contrast.pipeline import pipeline as contrast_pipeline
 
 
 def pipeline(rgb_img, with_tissue=False):

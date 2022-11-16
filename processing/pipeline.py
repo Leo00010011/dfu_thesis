@@ -1,5 +1,5 @@
-from .color import pipeline as color_pipeline
-from .depth import pipeline as depth_pipeline
+from processing.color.pipeline import pipeline as color_pipeline
+from processing.depth.pipeline import pipeline as depth_pipeline
 
 
 def pipeline(rgb_img, depth_frame):

@@ -1,8 +1,8 @@
 def initialize_opencv():
     opencv_installed = True
     try:
-        # import cv2
-        from cv2 import cv2
+        import cv2
+        # from cv2 import cv2
     except ImportError:
         pass
         print("OpenCV is not detected. Using Identity as an initial")
