@@ -12,7 +12,7 @@ OPTS['k_fold'] = 5
 
 # paths
 # aqui pones el directorio donde estan las img
-OPTS['test_dir'] = PATH + 'datas/cropped/'
+OPTS['test_dir'] = PATH + '/'
 OPTS['results_save_path'] = PATH + 'results/'
 OPTS['models_save_path_1'] = PATH + 'net-weights/linknet/'
 OPTS['models_save_path_2'] = PATH + 'net-weights/unet/'
