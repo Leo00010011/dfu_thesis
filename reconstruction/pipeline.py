@@ -1,14 +1,18 @@
 import time
 import datetime
 import sys
-from .make_fragments import run as make_fragments
-from .register_fragments import run as register_fragments
-from .refine_registration import run as refine_registration
-from .integrate_scene import run as integrate_scene
-from .slac_integrate import run as slac_integrate
+from reconstruction.make_fragments import run as make_fragments
+from reconstruction.register_fragments import run as register_fragments
+from reconstruction.refine_registration import run as refine_registration
+from reconstruction.integrate_scene import run as integrate_scene
+from reconstruction.slac_integrate import run as slac_integrate
+from reconstruction.initialize_config import initialize_config
 
 
-def pipeline(config, slac=False):
+def pipeline(slac=False, debug=False):
+    config = {"debug_mode": debug}
+
+    initialize_config(config)
 
     times = []
     start_time = time.time()

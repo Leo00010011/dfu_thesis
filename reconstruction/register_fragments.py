@@ -1,7 +1,7 @@
-from .refine_registration import multiscale_icp
-from .optimize_posegraph import optimize_posegraph_for_scene
-from .utility.visualization import draw_registration_result
-from .utility.file import join, get_file_list, make_clean_folder
+from reconstruction.refine_registration import multiscale_icp
+from reconstruction.optimize_posegraph import optimize_posegraph_for_scene
+from reconstruction.utility.visualization import draw_registration_result
+from reconstruction.utility.file import join, get_file_list, make_clean_folder
 import numpy as np
 import open3d as o3d
 

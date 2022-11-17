@@ -1,6 +1,6 @@
-from .optimize_posegraph import optimize_posegraph_for_fragment
-from .utility.opencv import initialize_opencv
-from .utility.file import join, make_clean_folder, get_rgbd_file_lists
+from reconstruction.optimize_posegraph import optimize_posegraph_for_fragment
+from reconstruction.utility.opencv import initialize_opencv
+from reconstruction.utility.file import join, make_clean_folder, get_rgbd_file_lists
 import math
 import numpy as np
 import open3d as o3d
@@ -161,7 +161,6 @@ def process_single_fragment(fragment_id, color_files, depth_files, n_files,
 
 
 def run(config):
-
     print("making fragments from RGBD sequence.")
     make_clean_folder(join(config["path_dataset"], config["folder_fragment"]))
 

@@ -1,32 +1,42 @@
+import numpy as np
+import time
+
+from images.masking import save_mask_and_crop
+from images.utils.names_generator import numeric_names
 from input.realsense_reader import RSReader
-import cv2
+import presentation.windows as windows
 from processing.pipeline import pipeline as processing_pipeline
 from tracking import pipeline as tracker
+from reconstruction.pipeline import pipeline as reconstruction_pipeline
 
 reader = RSReader()
 reader.start_camera()
+reader.save_intrinsic()
 
-initBB = None
+names = numeric_names()
 
-rectangle_color = (0, 255, 0)  # green
+bound_box = None
 
 for (color, depth) in reader.get_frames():
     color, depth = processing_pipeline(color, depth)
-    (H, W) = color.shape[:2]
-    if initBB is not None:
-        [x, y, w, h] = tracker.update(color)
-        cv2.rectangle(color, (x, y), (x + w, y + h), rectangle_color, 2)
+    color_cp = np.copy(color)
 
-    color_show = cv2.cvtColor(color, cv2.COLOR_RGB2BGR)
-    cv2.imshow("RGB", color_show)
-    key = cv2.waitKey(1) & 0xFF
-    if key & 0xFF == ord('q') or key == 27:
+    if bound_box is not None:
+        coords = tracker.update(color_cp)
+        windows.draw_rectangle(color_cp, coords)
+        save_mask_and_crop(color, depth, coords, next(names))
+
+    windows.show_window('CameraStream', color_cp)
+
+    key = windows.waitKey()
+    if key == ord('q') or key == 27:
         reader.stop_camera()
         break
     elif key == ord("s"):
-        initBB = cv2.selectROI("RGB", color, fromCenter=False,
-                               showCrosshair=True)
-        tracker.init(color, initBB)
-    elif key == 32:
-        print("A")
-cv2.destroyAllWindows()
+        bound_box = windows.select_region("CameraStream", color_cp)
+        tracker.init(color_cp, bound_box)
+
+windows.destroyAll()
+time.sleep(2)
+
+reconstruction_pipeline()

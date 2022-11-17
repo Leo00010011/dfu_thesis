@@ -1,5 +1,5 @@
-from .make_fragments import read_rgbd_image
-from .utility.file import *
+from reconstruction.make_fragments import read_rgbd_image
+from reconstruction.utility.file import *
 import numpy as np
 import math
 import open3d as o3d

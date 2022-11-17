@@ -1,4 +1,4 @@
-from .utility.file import join, get_rgbd_file_lists
+from reconstruction.utility.file import join, get_rgbd_file_lists
 import numpy as np
 import open3d as o3d
 import sys

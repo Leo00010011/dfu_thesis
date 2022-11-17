@@ -1,4 +1,4 @@
-from .utility.file import check_folder_structure, extract_rgbd_frames
+from reconstruction.utility.file import extract_rgbd_frames
 import os
 
 
@@ -11,7 +11,7 @@ def initialize_config(config):
 
     # set default parameters if not specified
     set_default_value(config, "depth_map_type", "redwood")
-    set_default_value(config, "n_frames_per_fragment", 100)
+    set_default_value(config, "n_frames_per_fragment", 50)
     set_default_value(config, "n_keyframes_per_n_frame", 5)
     set_default_value(config, "min_depth", 0.3)
     set_default_value(config, "max_depth", 3.0)
@@ -63,9 +63,7 @@ def initialize_config(config):
     set_default_value(config, "template_global_mesh", "scene/integrated.ply")
     set_default_value(config, "template_global_traj", "scene/trajectory.log")
 
-    if config["path_dataset"].endswith(".bag"):
-        assert os.path.isfile(config["path_dataset"]), (
-            f"File {config['path_dataset']} not found.")
-        print("Extracting frames from RGBD video file")
-        config["path_dataset"], config["path_intrinsic"], config[
-            "depth_scale"] = extract_rgbd_frames(config["path_dataset"])
+    config["path_dataset"] = "output/reconstruction/"
+
+    config["path_dataset"], config["path_intrinsic"], config[
+        "depth_scale"] = extract_rgbd_frames(config["path_dataset"])

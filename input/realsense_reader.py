@@ -5,10 +5,10 @@ import numpy as np
 class RSReader:
     def start_camera(self):
         cfg = o3d.t.io.RealSenseSensorConfig(
-            {'serial': '', 'color_format': 'RS2_FORMAT_RGB8'})
+            {'serial': '', 'color_format': 'RS2_FORMAT_RGB8', 'color_resolution': '1280,720', 'depth_resolution': '1280,720'})
 
         self.rs = o3d.t.io.RealSenseSensor()
-        self.rs.init_sensor(cfg, 0)
+        self.rs.init_sensor(cfg, 0, '.bagfile.bag')
         self.rs.start_capture()
 
     def get_frames(self):
@@ -20,3 +20,8 @@ class RSReader:
 
     def stop_camera(self):
         self.rs.stop_capture()
+
+    def save_intrinsic(self):
+        json_obj = str(self.rs.get_metadata())
+        with open('output/reconstruction/intrinsic.json', 'w') as intrinsic_file:
+            intrinsic_file.write(json_obj)
