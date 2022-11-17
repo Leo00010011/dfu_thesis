@@ -8,7 +8,7 @@ class RSReader:
             {'serial': '', 'color_format': 'RS2_FORMAT_RGB8', 'color_resolution': '1280,720', 'depth_resolution': '1280,720'})
 
         self.rs = o3d.t.io.RealSenseSensor()
-        self.rs.init_sensor(cfg, 0, '.bagfile.bag')
+        self.rs.init_sensor(cfg, 0, 'output/reconstruction/bagfile.bag')
         self.rs.start_capture()
 
     def get_frames(self):

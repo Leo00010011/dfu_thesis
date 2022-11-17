@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+#net weights
+metadata/
+
 # C extensions
 *.so
 
