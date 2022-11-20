@@ -11,7 +11,7 @@ OPTS['treshold'] = 0.5
 OPTS['k_fold'] = 5
 
 
-OPTS['results_save_path'] = "output/masks"
+OPTS['results_save_path'] = "output/masks/"
 OPTS['models_save_path_1'] = 'metadata/weights/linknet/'
 OPTS['models_save_path_2'] = 'metadata/weights/unet/'
 OPTS['pretrained_model_1'] = 'efficientnetb1'

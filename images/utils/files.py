@@ -2,8 +2,9 @@ import cv2
 import numpy as np
 
 
-def open_image(filename: str):
-    img = cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2RGB)
+def open_image(filename: str, gray=False):
+    img = cv2.cvtColor(cv2.imread(filename),
+                       cv2.COLOR_BGR2GRAY if gray else cv2.COLOR_BGR2RGB)
     return img
 
 
