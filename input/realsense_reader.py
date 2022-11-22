@@ -4,12 +4,14 @@ import numpy as np
 
 class RSReader:
     def start_camera(self):
+        if not o3d.t.io.RealSenseSensor.list_devices():
+            raise Exception("Camera unavailable")
         cfg = o3d.t.io.RealSenseSensorConfig(
             {'serial': '', 'color_format': 'RS2_FORMAT_RGB8', 'color_resolution': '1280,720', 'depth_resolution': '1280,720'})
 
         self.rs = o3d.t.io.RealSenseSensor()
         self.rs.init_sensor(cfg, 0, 'output/reconstruction/bagfile.bag')
-        self.rs.start_capture()
+        self.rs.start_capture(False)
 
     def get_frames(self):
         while True:

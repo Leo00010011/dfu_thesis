@@ -66,4 +66,4 @@ def predict():
 
         image = open_image(img_path)
         imsave(OPTS['results_save_path'] +
-               img_path.split("/")[-1], np.ones(image.shape))
+               img_path.split("/")[-1], np.ones(image.shape) * 255, check_contrast=False)

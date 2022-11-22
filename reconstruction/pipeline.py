@@ -40,13 +40,14 @@ def pipeline(slac=False, debug=False):
         times.append(time.time() - start_time)
 
     print("====================================")
-    print("Elapsed time (in h:m:s)")
+    print("Elapsed time (in h:m:s.ms)")
     print("====================================")
     print("- Making fragments    %s" % datetime.timedelta(seconds=times[0]))
     print("- Register fragments  %s" % datetime.timedelta(seconds=times[1]))
     print("- Refine registration %s" % datetime.timedelta(seconds=times[2]))
     print("- Integrate frames    %s" % datetime.timedelta(seconds=times[3]))
-    # print("- SLAC                %s" % datetime.timedelta(seconds=times[4]))
-    # print("- SLAC Integrate      %s" % datetime.timedelta(seconds=times[5]))
+    if slac:
+        print("- SLAC                %s" % datetime.timedelta(seconds=times[4]))
+        print("- SLAC Integrate      %s" % datetime.timedelta(seconds=times[5]))
     print("- Total               %s" % datetime.timedelta(seconds=sum(times)))
     sys.stdout.flush()

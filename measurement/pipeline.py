@@ -1,32 +1,47 @@
 import numpy as np
+import scipy as sc
 import open3d as o3d
-from sklearn.metrics.pairwise import euclidean_distances
 from measurement.utils.heron import heron
+from measurement.utils.top_ulcer import get_top
+from sklearn.metrics.pairwise import euclidean_distances
+from measurement.utils.point2plane import pP_distance as p2p
+from measurement.utils.file import open_point_cloud, open_triangle_mesh
 
+DEPTH_UNIT = 0.001
 
 def perimeter(ulcer_pcd):
-    """
-    Se calcula el perimetro como la suma de las distancia Euclideana de los puntos de la frontera de la ulcera.
-    Para ello se calculan los puntos que pertenecen a la envoltura convexa de la nube de puntos y se calcula la distancia entre ellos.
-    Fuente: Wound 3D Geometrical Feature Estimation Using Poisson Reconstruction
-    """
-    convex_hull = ulcer_pcd.select_by_index(
-        ulcer_pcd.compute_convex_hull()[1]).points
-    points_boundary = np.asarray(convex_hull)
-
-    distances = euclidean_distances(points_boundary, points_boundary)
-    p = distances[0][-1]
-    for i in range(0, distances.shape[0] - 1):
-        p += distances[i][i+1]
-
-    return p
+    ulcer2d = np.asarray(ulcer_pcd.points)[:,:2]
+    ch = ConvexHull(ulcer2d)
+    p = 0
+    for edge in ch.simplices:
+        p += euclidean_distances([ulcer2d[edge[0]]], [ulcer2d[edge[1]]])[0][0]
+    return p / DEPTH_UNIT
 
 
-def surface(ulcer_pcd, ulcer_mesh):
+def area(ulcer_mesh):
     triangles = np.asarray(ulcer_mesh.triangles)
-    points = np.asarray(ulcer_pcd.points)
-    s = 0
+    points = np.asarray(ulcer_mesh.vertices)
+    area = 0
     for t in triangles:
         pts = points[t]
-        s += heron(pts)
-    return s
+        area += heron(pts)
+    return area / (DEPTH_UNIT **2)
+
+def volume(ulcer_pcd):
+    points_3d = get_top(ulcer_pcd)
+    # luego hago la triangulacion de Delaunay en 3D
+    delaunay = sc.spatial.Delaunay(np.concatenate((points_3d.points, np.asarray(ulcer_pts.points))))
+    # se calcula el volumen de cada piramide
+    volume = 0
+    for pyramid in delaunay.simplices:
+        pts = delaunay.points[pyramid]
+        AB = heron(pts[1:])
+        h = pP_distance(pts[0], pts[1], pts[2], pts[3])
+        volume += (AB * h) / 3
+    return volume / (DEPTH_UNIT ** 3)
+
+def measurement_pipeline():
+    mesh = open_triangle_mesh()
+    pcd = open_point_cloud()
+    
+    return perimeter(pcd), area(mesh), volume(pcd)

@@ -1,51 +1,91 @@
-import numpy as np
+import os
+# ignore TF warnings
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+import open3d as o3d
+o3d.utility.set_verbosity_level(o3d.utility.VerbosityLevel.Error)
+
 import time
-
-from images.masking import save_crop, update_reconstruction_masks
-from images.utils.names_generator import numeric_names
-from input.realsense_reader import RSReader
+import numpy as np
 import presentation.windows as windows
-from processing.pipeline import pipeline as processing_pipeline
+from data.pipeline import data_pipeline
 from tracking import pipeline as tracker
-from reconstruction.pipeline import pipeline as reconstruction_pipeline
+from input.realsense_reader import RSReader
+from output.pipeline import clear_output_pipeline
+from images.utils.names_generator import numeric_names
+from processing.pipeline import pipeline as processing_pipeline
+from images.masking import save_crop, update_reconstruction_masks
 from segmentation.predictor import predict as segmentation_pipeline
+from reconstruction.pipeline import pipeline as reconstruction_pipeline
 
+if __name__ == "__main__":
+    # clear output of previous execution
+    clear_output_pipeline()
 
-reader = RSReader()
-reader.start_camera()
-reader.save_intrinsic()
+    # read data pipeline
+    # patient = data_pipeline()
 
-camera_resolution = (reader.rs.get_metadata().height,
-                     reader.rs.get_metadata().width)
-print(camera_resolution)
+    # initialize the camera reader
+    reader = RSReader()
+    # start recording with camera
+    reader.start_camera()
+    # save in json file the intrinsic matrix of the camera
+    reader.save_intrinsic()
 
-names = numeric_names()
+    # save the resolution of the camera
+    camera_resolution = (reader.rs.get_metadata().height,
+                        reader.rs.get_metadata().width)
 
-bound_box = None
+    names = numeric_names()
 
-for (color, depth) in reader.get_frames():
-    color, depth = processing_pipeline(color, depth)
-    color_cp = np.copy(color)
+    bound_box = None
 
-    if bound_box is not None:
-        coords = tracker.update(color_cp)
-        windows.draw_rectangle(color_cp, coords)
-        save_crop(color, depth, coords, next(names))
+    # read frames from camera
+    for (color, depth) in reader.get_frames():
+        # preprocess each frame 
+        color, depth = processing_pipeline(color, depth)
+        color_cp = np.copy(color)
 
-    windows.show_window('CameraStream', color_cp)
+        # update bounding box of tracker
+        if bound_box is not None:
+            coords = tracker.update(color_cp)
+            windows.draw_rectangle(color_cp, coords)
+            # save images
+            save_crop(color, depth, coords, next(names))
 
-    key = windows.waitKey()
-    if key == ord('q') or key == 27:
-        reader.stop_camera()
-        break
-    elif key == ord("s"):
-        bound_box = windows.select_region("CameraStream", color_cp)
-        tracker.init(color_cp, bound_box)
+        # show window with frame
+        windows.show_window('DFU Camera', color_cp)
 
-windows.destroyAll()
-time.sleep(2)
+        # wait for interaction 
+        key = windows.waitKey()
+        # if interaction is q or ESC then stop recording
+        if key == ord('q') or key == 27:
+            reader.stop_camera()
+            break
+        # if interaction is s then select DFU region
+        elif key == ord("s"):
+            bound_box = windows.select_region("DFU Camera", color_cp)
+            # init tracker 
+            tracker.init(color_cp, bound_box)
 
-# segmentation_pipeline()
-# update_reconstruction_masks(camera_resolution)
+    # close window
+    windows.destroyAll()
+    time.sleep(2)
 
-reconstruction_pipeline()
+    # if never select DFU region, then close program
+    if bound_box is None:
+        exit(0)
+
+    # start segmentation pipeline
+    segmentation_pipeline()
+
+    # update masks for reconstruction
+    #update_reconstruction_masks(camera_resolution)
+
+    # reconstruction pipeline
+    #reconstruction_pipeline()
+
+    # measure the model 3d
+    #measurement_pipeline()
+
+    # create report
+    # TODO create report pipeline
