@@ -16,67 +16,69 @@ from processing.pipeline import pipeline as processing_pipeline
 from images.masking import save_crop, update_reconstruction_masks
 from segmentation.predictor import predict as segmentation_pipeline
 from reconstruction.pipeline import pipeline as reconstruction_pipeline
+from measurement.pipeline import measurement_pipeline
+from report.pipeline import pipeline as report_pipeline
 
 if __name__ == "__main__":
     # clear output of previous execution
-    clear_output_pipeline()
+    # clear_output_pipeline()
 
     # read data pipeline
-    # patient = data_pipeline()
+    patient = data_pipeline()
 
-    # initialize the camera reader
-    reader = RSReader()
-    # start recording with camera
-    reader.start_camera()
-    # save in json file the intrinsic matrix of the camera
-    reader.save_intrinsic()
+    # # initialize the camera reader
+    # reader = RSReader()
+    # # start recording with camera
+    # reader.start_camera()
+    # # save in json file the intrinsic matrix of the camera
+    # reader.save_intrinsic()
 
-    # save the resolution of the camera
-    camera_resolution = (reader.rs.get_metadata().height,
-                        reader.rs.get_metadata().width)
+    # # save the resolution of the camera
+    # camera_resolution = (reader.rs.get_metadata().height,
+    #                     reader.rs.get_metadata().width)
 
-    names = numeric_names()
+    # names = numeric_names()
 
-    bound_box = None
+    # bound_box = None
 
-    # read frames from camera
-    for (color, depth) in reader.get_frames():
-        # preprocess each frame 
-        color, depth = processing_pipeline(color, depth)
-        color_cp = np.copy(color)
+    # # read frames from camera
+    # for (color, depth) in reader.get_frames():
+    #     # preprocess each frame 
+    #     color, depth = processing_pipeline(color, depth)
+    #     color_cp = np.copy(color)
 
-        # update bounding box of tracker
-        if bound_box is not None:
-            coords = tracker.update(color_cp)
-            windows.draw_rectangle(color_cp, coords)
-            # save images
-            save_crop(color, depth, coords, next(names))
+    #     # update bounding box of tracker
+    #     if bound_box is not None:
+    #         coords = tracker.update(color_cp)
+    #         windows.draw_rectangle(color_cp, coords)
+    #         # save images
+    #         save_crop(color, depth, coords, next(names))
 
-        # show window with frame
-        windows.show_window('DFU Camera', color_cp)
+    #     # show window with frame
+    #     windows.show_window('DFU Camera', color_cp)
 
-        # wait for interaction 
-        key = windows.waitKey()
-        # if interaction is q or ESC then stop recording
-        if key == ord('q') or key == 27:
-            reader.stop_camera()
-            break
-        # if interaction is s then select DFU region
-        elif key == ord("s"):
-            bound_box = windows.select_region("DFU Camera", color_cp)
-            # init tracker 
-            tracker.init(color_cp, bound_box)
+    #     # wait for interaction 
+    #     key = windows.waitKey()
+    #     # if interaction is q or ESC then stop recording
+    #     if key == ord('q') or key == 27:
+    #         reader.stop_camera()
+    #         break
+    #     # if interaction is s then select DFU region
+    #     elif key == ord("s"):
+    #         bound_box = windows.select_region("DFU Camera", color_cp)
+    #         # init tracker 
+    #         tracker.init(color_cp, bound_box)
 
-    # close window
-    windows.destroyAll()
-    time.sleep(2)
+    # # close window
+    # windows.destroyAll()
+    # time.sleep(2)
 
-    # if never select DFU region, then close program
-    if bound_box is None:
-        exit(0)
+    # # if never select DFU region, then close program
+    # if bound_box is None:
+    #     exit(0)
 
     # start segmentation pipeline
-    segmentation_pipeline()
+    #segmentation_pipeline()
 
     # update masks for reconstruction
     #update_reconstruction_masks(camera_resolution)
@@ -85,7 +87,7 @@ if __name__ == "__main__":
     #reconstruction_pipeline()
 
     # measure the model 3d
-    #measurement_pipeline()
-
+    #p, a, v = measurement_pipeline()
+    p, a, v = 1, 2,3
     # create report
-    # TODO create report pipeline
+    report_pipeline(patient, p, a, v)

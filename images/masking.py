@@ -30,8 +30,8 @@ def save_crop(color, depth, coords, name):
         json_file.write(json_content)
 
     cv2.imwrite(f'output/reconstruction/color/{name}.jpg',
-                cv2.cvtColor(color_cropped, cv2.COLOR_RGB2BGR))
-    cv2.imwrite(f'output/reconstruction/depth/{name}.png', depth_cropped)
+                cv2.cvtColor(color, cv2.COLOR_RGB2BGR))
+    cv2.imwrite(f'output/reconstruction/depth/{name}.png', depth)
 
 
 def update_reconstruction_masks(size):

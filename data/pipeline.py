@@ -38,7 +38,7 @@ def get_dfu_loc(DATA):
     foot = choose("LOCALIZACIÓN DE LA ÚLCERA:\nPIE:", ["Derecho", "Izquierdo"])
     
     choice = choose("LOCALIZACIÓN DE LA ÚLCERA:\nREGIÓN DE LOCALIZACIÓN:", ["Dedos del pie", "Plantar", "Dorsal", "Calcánea", "Anterior del tobillo", "Posterior del tobillo", "Retromaleolar lateral", "Retromaleolar medial", "Anterior de la pierna", "Posterior de la pierna", "Sural"])    
-    DATA["dfu_loc"] = f"Región {choice} del pie {foot}"
+    DATA["dfu_loc"] = f"Región {choice} {foot}"
     print("LOCALIZACIÓN DE LA ÚLCERA:", DATA["dfu_loc"])
     
 def data_pipeline():
@@ -63,5 +63,4 @@ def data_pipeline():
     get_dfu_type(DATA)
     get_dfu_loc(DATA)
     print("====================================")
-    print(DATA)
     return DATA

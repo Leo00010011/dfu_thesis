@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def get_plane(x: np.array, y: np.array, z: np.array):
     xy = y - x
     xz = z - x

@@ -5,11 +5,12 @@ from reconstruction.make_fragments import run as make_fragments
 from reconstruction.register_fragments import run as register_fragments
 from reconstruction.refine_registration import run as refine_registration
 from reconstruction.integrate_scene import run as integrate_scene
+from reconstruction.slac import run as slac
 from reconstruction.slac_integrate import run as slac_integrate
 from reconstruction.initialize_config import initialize_config
 
 
-def pipeline(slac=False, debug=False):
+def pipeline(do_slac=False, debug=False):
     config = {"debug_mode": debug}
 
     initialize_config(config)
@@ -31,7 +32,7 @@ def pipeline(slac=False, debug=False):
     integrate_scene(config)
     times.append(time.time() - start_time)
 
-    if slac:
+    if do_slac:
         start_time = time.time()
         slac(config)
         times.append(time.time() - start_time)
@@ -46,7 +47,7 @@ def pipeline(slac=False, debug=False):
     print("- Register fragments  %s" % datetime.timedelta(seconds=times[1]))
     print("- Refine registration %s" % datetime.timedelta(seconds=times[2]))
     print("- Integrate frames    %s" % datetime.timedelta(seconds=times[3]))
-    if slac:
+    if do_slac:
         print("- SLAC                %s" % datetime.timedelta(seconds=times[4]))
         print("- SLAC Integrate      %s" % datetime.timedelta(seconds=times[5]))
     print("- Total               %s" % datetime.timedelta(seconds=sum(times)))
