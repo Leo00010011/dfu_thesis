@@ -9,6 +9,7 @@ from processing.pipeline import pipeline as processing_pipeline
 from tracking import pipeline as tracker
 from reconstruction.pipeline import pipeline as reconstruction_pipeline
 from segmentation.predictor import predict as segmentation_pipeline
+from measurement.pipeline import pipeline as measurement_pipeline
 
 
 reader = RSReader()
@@ -17,7 +18,6 @@ reader.save_intrinsic()
 
 camera_resolution = (reader.rs.get_metadata().height,
                      reader.rs.get_metadata().width)
-print(camera_resolution)
 
 names = numeric_names()
 
@@ -45,7 +45,10 @@ for (color, depth) in reader.get_frames():
 windows.destroyAll()
 time.sleep(2)
 
-# segmentation_pipeline()
-# update_reconstruction_masks(camera_resolution)
+segmentation_pipeline()
+update_reconstruction_masks((720, 1280))
 
-reconstruction_pipeline()
+depth_scale = reconstruction_pipeline({})
+
+perimeter, surface, volume = measurement_pipeline(depth_scale)
+print(perimeter, surface, volume)

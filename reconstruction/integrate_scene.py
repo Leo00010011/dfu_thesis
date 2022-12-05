@@ -7,7 +7,7 @@ import open3d as o3d
 
 def scalable_integrate_rgb_frames(path_dataset, intrinsic, config):
     poses = []
-    [color_files, depth_files] = get_rgbd_file_lists(path_dataset)
+    [color_files, depth_files] = get_rgbd_file_lists(path_dataset, masked=True)
     n_files = len(color_files)
     n_fragments = int(math.ceil(float(n_files) /
                                 config['n_frames_per_fragment']))
@@ -39,6 +39,10 @@ def scalable_integrate_rgb_frames(path_dataset, intrinsic, config):
             poses.append(pose)
 
     mesh = volume.extract_triangle_mesh()
+
+    # Crop mesh by color
+    mesh_colors = np.asarray(mesh.vertex_colors)
+    mesh = mesh.select_by_index(np.where(mesh_colors[:, 0] > 0.1)[0])
     mesh.compute_vertex_normals()
     if config["debug_mode"]:
         o3d.visualization.draw_geometries([mesh])

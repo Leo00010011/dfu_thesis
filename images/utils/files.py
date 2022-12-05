@@ -1,4 +1,5 @@
 import cv2
+import open3d as o3d
 import numpy as np
 
 
@@ -22,3 +23,7 @@ def get_image(filename: str, preprocess_input=None):
     if not preprocess_input is None:
         x_padded = preprocess_input(x_padded)
     return cv2.resize(x_padded, (resize_target, resize_target)), x.shape, x_padded.shape
+
+
+def open_mesh(path):
+    return o3d.io.read_triangle_mesh(path)

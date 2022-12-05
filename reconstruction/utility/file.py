@@ -36,14 +36,16 @@ def add_if_exists(path_dataset, folder_names):
         f"None of the folders {folder_names} found in {path_dataset}")
 
 
-def get_rgbd_folders(path_dataset):
+def get_rgbd_folders(path_dataset, masked=False):
     path_color = add_if_exists(path_dataset, ["image/", "rgb/", "color/"])
+    if masked:
+        path_color = add_if_exists(path_dataset, ["color_masked/"])
     path_depth = join(path_dataset, "depth/")
     return path_color, path_depth
 
 
-def get_rgbd_file_lists(path_dataset):
-    path_color, path_depth = get_rgbd_folders(path_dataset)
+def get_rgbd_file_lists(path_dataset, masked=False):
+    path_color, path_depth = get_rgbd_folders(path_dataset, masked)
     color_files = get_file_list(path_color, ".jpg") + \
         get_file_list(path_color, ".png")
     depth_files = get_file_list(path_depth, ".png")

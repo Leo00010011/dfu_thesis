@@ -6,12 +6,12 @@ from glob import glob
 from images.utils.files import open_image
 
 
-def mask_rectangle(image, coords, size):
+def pad_mask_to_fill_rectangle(mask, coords, size):
     a, b = size
     [x, y, w, h] = coords
-    image_pad = np.zeros((a, b, image.shape[-1]))
-    image_pad[y:y+h, x:x+w] = image
-    return image_pad.astype(image.dtype)
+    image_pad = np.zeros((a, b, mask.shape[-1]))
+    image_pad[y:y+h, x:x+w] = mask
+    return image_pad.astype(mask.dtype)
 
 
 def crop_rectangular(image, coords):
@@ -19,9 +19,13 @@ def crop_rectangular(image, coords):
     return image[y:y+h, x:x+w]
 
 
+def apply_mask(image, mask):
+    print(image.shape, mask.shape)
+    return (image*mask).astype(image.dtype)
+
+
 def save_crop(color, depth, coords, name):
     color_cropped = crop_rectangular(color, coords)
-    depth_cropped = crop_rectangular(depth, coords)
     cv2.imwrite(f'output/segmentation/{name}.jpg',
                 cv2.cvtColor(color_cropped, cv2.COLOR_RGB2BGR))
 
@@ -30,30 +34,22 @@ def save_crop(color, depth, coords, name):
         json_file.write(json_content)
 
     cv2.imwrite(f'output/reconstruction/color/{name}.jpg',
-                cv2.cvtColor(color_cropped, cv2.COLOR_RGB2BGR))
-    cv2.imwrite(f'output/reconstruction/depth/{name}.png', depth_cropped)
+                cv2.cvtColor(color, cv2.COLOR_RGB2BGR))
+    cv2.imwrite(f'output/reconstruction/depth/{name}.png', depth)
 
 
 def update_reconstruction_masks(size):
     json_paths = sorted(glob('output/segmentation/*.json'))
     masks_paths = sorted(glob('output/masks/*.jpg'))
-    reconstruction_color_masks = sorted(
-        glob('output/reconstruction/color/*.jpg'))
-    reconstruction_depth_masks = sorted(
-        glob('output/reconstruction/depth/*.png'))
+    color_paths = sorted(glob('output/reconstruction/color/*.jpg'))
 
-    for json_path, mask_path, color_path, depth_path in zip(json_paths, masks_paths, reconstruction_color_masks, reconstruction_depth_masks):
+    for json_path, mask_path, color_path in zip(json_paths, masks_paths, color_paths):
         with open(json_path, 'r') as json_file:
             cords = json.loads(json_file.read())
-            mask = np.array(open_image(mask_path, True))
-            mask[mask > 0] = 255
-            color = np.array(open_image(color_path))
-            depth = np.array(open_image(depth_path))
-            color_masked = mask_rectangle(cv2.bitwise_and(
-                color, color, mask=mask), cords, size)
-            depth_masked = mask_rectangle(cv2.bitwise_and(
-                depth, depth, mask=mask), cords, size)
-            cv2.imwrite(color_path,
+            mask = np.array(open_image(mask_path, False))
+            color = np.array(open_image(color_path, False))
+            mask[mask > 0] = 1
+            mask_updated = pad_mask_to_fill_rectangle(mask, cords, size)
+            color_masked = apply_mask(color, mask_updated)
+            cv2.imwrite(f'output/reconstruction/color_masked/{color_path.split("/")[-1]}',
                         cv2.cvtColor(color_masked, cv2.COLOR_RGB2BGR))
-            cv2.imwrite(depth_path,
-                        cv2.cvtColor(depth_masked, cv2.COLOR_RGB2BGR))

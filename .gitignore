@@ -6,6 +6,9 @@ __pycache__/
 #net weights
 metadata/
 
+#output
+output/
+
 # C extensions
 *.so
 
