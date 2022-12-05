@@ -6,8 +6,15 @@ __pycache__/
 #net weights
 metadata/
 
-#output
-output/
+output/masks/*.jpg
+output/reconstruction/color/*.jpg
+output/reconstruction/depth/*.png
+output/reconstruction/fragments/
+output/reconstruction/scene
+output/segmentation/*.jpg
+output/segmentation/*.json
+output/reports/*.pdf
+
 
 # C extensions
 *.so

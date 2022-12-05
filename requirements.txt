@@ -10,4 +10,4 @@ scikit-image
 open3d==0.14.1
 pyrealsense2
 matplotlib
-pdfkit
+fpdf==1.7.2

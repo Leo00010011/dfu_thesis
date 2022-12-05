@@ -37,7 +37,7 @@ def pipeline(config, slac=False, debug=False):
     times.append(time.time() - start_time)
 
     print("====================================")
-    print("Elapsed time (in h:m:s)")
+    print("Elapsed time (in h:m:s.ms)")
     print("====================================")
     print("- Making fragments    %s" % datetime.timedelta(seconds=times[0]))
     print("- Register fragments  %s" % datetime.timedelta(seconds=times[1]))
