@@ -23,7 +23,7 @@ def initialize_config(config):
     set_default_value(config, "tsdf_cubic_size", 0.5)
     set_default_value(config, "icp_method", "color")
     set_default_value(config, "global_registration", "fgr")
-    set_default_value(config, "python_multi_threading", True)
+    set_default_value(config, "python_multi_threading", False)# FIXME
 
     # `slac` and `slac_integrate` related parameters.
     # `voxel_size` and `min_depth` paramters from previous section,
@@ -63,7 +63,7 @@ def initialize_config(config):
     set_default_value(config, "template_global_mesh", "scene/integrated.ply")
     set_default_value(config, "template_global_traj", "scene/trajectory.log")
 
-    config["path_dataset"] = "output/reconstruction/"
+    config["path_dataset"] = "output\\reconstruction\\"
 
     config["path_dataset"], config["path_intrinsic"], config[
         "depth_scale"] = extract_rgbd_frames(config["path_dataset"])

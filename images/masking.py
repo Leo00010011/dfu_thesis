@@ -51,5 +51,6 @@ def update_reconstruction_masks(size):
             mask[mask > 0] = 1
             mask_updated = pad_mask_to_fill_rectangle(mask, cords, size)
             color_masked = apply_mask(color, mask_updated)
-            cv2.imwrite(f'output/reconstruction/color_masked/{color_path.split("/")[-1]}',
+            temp = color_path.split( '\\' )[-1]
+            cv2.imwrite(f"output/reconstruction/color_masked/{temp}",
                         cv2.cvtColor(color_masked, cv2.COLOR_RGB2BGR))

@@ -29,9 +29,8 @@ def register_one_rgbd_pair(s, t, color_files, depth_files, intrinsic,
                                         config)
     target_rgbd_image = read_rgbd_image(color_files[t], depth_files[t], True,
                                         config)
-
     option = o3d.pipelines.odometry.OdometryOption()
-    option.max_depth_diff = config["max_depth_diff"]
+    option.depth_diff_max = config["max_depth_diff"]
     if abs(s - t) != 1:
         if with_opencv:
             success_5pt, odo_init = pose_estimation(source_rgbd_image,

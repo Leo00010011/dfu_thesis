@@ -111,7 +111,8 @@ def register_point_cloud_pair(ply_file_names, s, t, transformation_init,
     source = o3d.io.read_point_cloud(ply_file_names[s])
     print("reading %s ..." % ply_file_names[t])
     target = o3d.io.read_point_cloud(ply_file_names[t])
-
+    print(source)
+    print(target)
     if config["debug_mode"]:
         draw_registration_result_original_color(source, target,
                                                 transformation_init)
@@ -135,22 +136,26 @@ class matching_result:
         self.success = False
         self.transformation = trans
         self.infomation = np.identity(6)
-
+        
 
 def make_posegraph_for_refined_scene(ply_file_names, config):
+    config["path_dataset"] = 'output\\reconstruction\\'
+    config["template_global_posegraph_optimized"] = 'scene\\global_registration_optimized.json'
     pose_graph = o3d.io.read_pose_graph(
         join(config["path_dataset"],
              config["template_global_posegraph_optimized"]))
 
     n_files = len(ply_file_names)
     matching_results = {}
-    for edge in pose_graph.edges:
+    
+    for i, edge in enumerate(pose_graph.edges):
         s = edge.source_node_id
         t = edge.target_node_id
-
+        
         transformation_init = edge.transformation
-        matching_results[s * n_files + t] = \
-            matching_result(s, t, transformation_init)
+        matching_results[s * n_files + t] = matching_result(s, t, transformation_init)
+        if(i == len(pose_graph.edges) - 1):
+            break
 
     if config["python_multi_threading"] == True:
         from joblib import Parallel, delayed

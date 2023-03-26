@@ -26,6 +26,7 @@ def predict_model(filename: str, model, pretrained: str):
 
 def predict():
     nn = None
+    # linknets, unets = [], []
 
     # for i in range(5):
     #     linknets.append(sm.Linknet(
@@ -38,10 +39,10 @@ def predict():
 
     images = glob.glob(PATH + "*" + OPTS["img_type"])
     for img_path in images:
-        # nn = sm.Linknet(OPTS['pretrained_model_1'], classes=1,
-        #                 activation='sigmoid', encoder_weights='imagenet')
-        # nn.load_weights(OPTS["models_save_path_1"] + f"linknet_{1}.h5")
-        # ln = predict_model(img_path, nn, "pretrained_model_1")
+        nn = sm.Linknet(OPTS['pretrained_model_1'], classes=1,
+                        activation='sigmoid', encoder_weights='imagenet')
+        nn.load_weights(OPTS["models_save_path_1"] + f"linknet_{1}.h5")
+        ln = predict_model(img_path, nn, "pretrained_model_1")
         # for i in range(4):
         #     nn = sm.Linknet(OPTS['pretrained_model_1'], classes=1,
         #                     activation='sigmoid', encoder_weights='imagenet')
@@ -50,7 +51,7 @@ def predict():
 
         # nn = sm.Unet(OPTS['pretrained_model_2'], classes=1, activation='sigmoid',
         #              encoder_weights='imagenet', decoder_block_type='transpose')
-        # nn.load_weights(OPTS["models_save_path_2"] + f"unet_{1}.h5")
+        # nn.load_weights(OPTS["models_save_path_2"] + f"unet_{2}.h5")
         # un = predict_model(img_path, nn, "pretrained_model_2")
         # for i in range(4):
         #     nn = sm.Unet(OPTS['pretrained_model_2'], classes=1, activation='sigmoid',
@@ -58,12 +59,12 @@ def predict():
         #     nn.load_weights(OPTS["models_save_path_2"] + f"unet_{i+2}.h5")
         #     un += predict_model(img_path, nn, "pretrained_model_2")
 
-        # average = np.array((ln.astype(float) + un.astype(float))/2)
-        # average = np.uint(average > .5)
-        # average = binary_fill_holes(average > 0).astype(float)
-        # average = remove_small_objects(
-        #     average > .5, min_size=100, connectivity=2)
+        # np.array((ln.astype(float) + un.astype(float))/2)
+        average = ln.astype(float)
+        average = np.uint(average > .5)
+        average = binary_fill_holes(average > 0).astype(float)
+        average = remove_small_objects(
+            average > .5, min_size=100, connectivity=2)
 
-        image = open_image(img_path)
         imsave(OPTS['results_save_path'] +
-               img_path.split("/")[-1], np.ones(image.shape) * 255, check_contrast=False)
+               img_path.split("\\")[-1], average, check_contrast=False)
