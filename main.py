@@ -6,7 +6,7 @@ from images.masking import save_crop, update_reconstruction_masks
 from processing.pipeline import pipeline as processing_pipeline
 from images.utils.names_generator import numeric_names
 from output.pipeline import clear_output_pipeline
-from input.realsense_reader import RSReader
+from input.realsense_reader import RSReader, RSPlayback
 from tracking import pipeline as tracker
 from data.pipeline import data_pipeline
 import presentation.windows as windows
@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     start_time = time.time()
     # initialize the camera reader
-    reader = RSReader()
+    reader = RSPlayback()
     # start recording with camera
     reader.start_camera()
     # save in json file the intrinsic matrix of the camera
@@ -41,8 +41,9 @@ if __name__ == "__main__":
     # output/reconstruction/intrinsic.json
 
     # # # # save the resolution of the camera
-    camera_resolution = (reader.rs.get_metadata().height,
-                         reader.rs.get_metadata().width)
+    camera_resolution = reader.get_resolution()
+
+    
 
     names = numeric_names()
 
@@ -50,6 +51,8 @@ if __name__ == "__main__":
 
     # read frames from camera
     for (color, depth) in reader.get_frames():
+        print(color)
+        print(depth)
         # preprocess each frame
         color, depth = processing_pipeline(color, depth)
         color_cp = np.copy(color)

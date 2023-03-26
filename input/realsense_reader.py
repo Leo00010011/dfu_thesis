@@ -1,4 +1,5 @@
 import open3d as o3d
+import pyrealsense2 as rs
 import numpy as np
 
 
@@ -27,3 +28,42 @@ class RSReader:
         json_obj = str(self.rs.get_metadata())
         with open('output/reconstruction/intrinsic.json', 'w') as intrinsic_file:
             intrinsic_file.write(json_obj)
+
+    def get_resolution(self):
+        return (self.rs.get_metadata().height,
+                self.rs.get_metadata().width)
+
+
+class RSPlayback:
+    def start_camera(self):
+        self.pipeline = rs.pipeline()
+        self.config = rs.config()
+        self.config.enable_device_from_file('bags_to_process/a.bag')
+        self.profile = self.pipeline.start(self.config)
+        self.stream_color = self.profile.get_stream(rs.stream.color)
+        self.stream_depth = self.profile.get_stream(rs.stream.depth)
+
+    def get_frames(self):
+        while True:
+            frames = self.pipeline.wait_for_frames()
+            color_frame = frames.get_color_frame()
+            color_image = np.asanyarray(color_frame.get_data())
+            depth_frame = frames.get_depth_frame()
+            depth_image = np.asanyarray(depth_frame.get_data())
+            yield color_image, depth_image
+
+
+
+    def stop_camera(self):
+        self.pipeline.stop()
+
+    def get_resolution(self):
+        return (self.stream_color.as_video_stream_profile().intrinsics.width,
+                self.stream_color.as_video_stream_profile().intrinsics.height)
+        
+
+    def save_intrinsic(self):
+        pass
+
+
+    
