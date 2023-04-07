@@ -6,14 +6,7 @@ __pycache__/
 #net weights
 metadata/
 
-output/masks/*.jpg
-output/reconstruction/color/*.jpg
-output/reconstruction/depth/*.png
-output/reconstruction/fragments/
-output/reconstruction/scene
-output/segmentation/*.jpg
-output/segmentation/*.json
-output/reports/*.pdf
+output/
 bags_to_process/
 
 
