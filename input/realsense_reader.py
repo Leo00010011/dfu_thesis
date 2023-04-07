@@ -42,15 +42,20 @@ class RSPlayback:
         self.profile = self.pipeline.start(self.config)
         self.stream_color = self.profile.get_stream(rs.stream.color)
         self.stream_depth = self.profile.get_stream(rs.stream.depth)
+        self.device = self.profile.get_device()
+        self.playback = self.device.as_playback()
+        
 
     def get_frames(self):
+        align = rs.align(rs.stream.color)
         while True:
             frames = self.pipeline.wait_for_frames()
+            frames = align.process(frames)
             color_frame = frames.get_color_frame()
-            color_image = np.asanyarray(color_frame.get_data())
+            color_frame = np.asanyarray(color_frame.get_data())
             depth_frame = frames.get_depth_frame()
-            depth_image = np.asanyarray(depth_frame.get_data())
-            yield color_image, depth_image
+            depth_frame = np.asanyarray(depth_frame.get_data())
+            yield color_frame, depth_frame
 
 
 
@@ -58,12 +63,17 @@ class RSPlayback:
         self.pipeline.stop()
 
     def get_resolution(self):
-        return (self.stream_color.as_video_stream_profile().intrinsics.width,
-                self.stream_color.as_video_stream_profile().intrinsics.height)
+        return (self.stream_color.as_video_stream_profile().intrinsics.height,
+                self.stream_color.as_video_stream_profile().intrinsics.width)
         
 
     def save_intrinsic(self):
-        pass
+        bag_reader = o3d.t.io.RSBagReader()
+        bag_reader.open("bags_to_process/a.bag")
+        json_obj = str(bag_reader.metadata)
+        with open('output/reconstruction/intrinsic.json', 'w') as intrinsic_file:
+            intrinsic_file.write(json_obj)
+        bag_reader.close()
 
 
     

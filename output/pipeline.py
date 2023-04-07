@@ -9,6 +9,7 @@ def clear_output_pipeline():
     # clear reconstruction
     remove_files(glob("output/reconstruction/*.*"))
     remove_files(glob("output/reconstruction/color/*.*"))
+    remove_files(glob("output/reconstruction/color_masked/*.*"))
     remove_files(glob("output/reconstruction/depth/*.*"))
     remove_files(glob("output/reconstruction/fragments/*.*"))
     remove_files(glob("output/reconstruction/scene/*.*"))
