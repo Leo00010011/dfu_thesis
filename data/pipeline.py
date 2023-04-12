@@ -55,7 +55,8 @@ def data_pipeline():
         "diabetes_type": "-",
         "dfu_type": "-",
         "dfu_loc": "-",
-        "datetime": f"{now.day}/{now.month}/{now.year} {now.hour}:{now.minute}"
+        "datetime": f"{now.day}/{now.month}/{now.year} {now.hour}:{now.minute}",
+        "real_date": now
     }
     print("====================================")
     print("DATOS DEL PACIENTE")
